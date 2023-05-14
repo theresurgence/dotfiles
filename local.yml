@@ -1,0 +1,114 @@
+# Tasks
+
+# nvim
+# vimplug
+# - cocnvim etc...
+# plug in install
+
+# zsh
+# download fonts
+# automate powerlevel10k
+# let user choose config or i generate?
+
+
+---
+- hosts: localhost
+  become: no
+
+  pre_tasks:
+    - name: Upgrade Debian packages
+      become: yes
+      block:
+      - ansible.builtin.apt: 
+          update_cache: yes 
+          force_apt_get: yes 
+          cache_valid_time: 3600
+
+      - ansible.builtin.apt:
+          upgrade: dist 
+          force_apt_get: yes
+      when: ansible_facts['os_family'] == 'Debian'
+
+    - name: Upgrade Arch packages
+      become: yes
+      block:
+      - community.general.pacman:
+          update_cache: yes
+          upgrade: yes
+      when: ansible_facts['os_family'] == 'Archlinux'
+
+
+  #   - name: Enable passwordless sudo for current User
+  #     lineinfile:
+  #       dest: /etc/sudoers
+  #       regexp: "^%sudo"
+  #       line: "{{ curr_user}} ALL=(ALL) NOPASSWD: ALL"
+  #       validate: "/usr/sbin/visudo -c %s"
+
+
+  tasks:
+  - name: Install essential packages
+    become: yes
+    package:
+      name:
+        - git
+        - zsh
+        - kitty
+        - neovim
+        - tmux
+        - screen
+        - neofetch
+        - stow
+        - ranger
+        - zip
+        - unzip
+        - tar
+        # - btop
+      state: present
+
+  - name: Uninstall unnecessary text editors
+    become: yes
+    package:
+      name:
+        - nano
+        - vim
+        - gedit
+      state: absent
+
+
+  - name: Change user shell to zsh
+    become: yes
+    user:
+      name: "{{ ansible_facts['env']['USER'] }}"
+      shell: /usr/bin/zsh
+
+
+  - name: Git clone Powerlevel10k
+    become: yes
+    git:
+      repo: https://github.com/romkatv/powerlevel10k.git
+      dest: /opt/powerlevel10k
+      depth: 1
+      update: no
+
+
+  - name: stow dotfiles to home directory
+    shell:
+      chdir: "./dotfiles"
+      cmd: "stow --adopt --target ~ * "
+
+  - name: overwrite existing dotfiles with those in git repo
+    command:
+      cmd: git restore dotfiles
+
+
+    # https://waylonwalker.com/ansible-install-fonts/
+    # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/get_url_module.html
+  - name: Download Hack
+    become: yes
+    ansible.builtin.unarchive:
+      src: https://github.com/ryanoasis/nerd-fonts/releases/download/v2.2.0/Hack.zip
+      dest: "/usr/share/fonts"
+      remote_src: yes
+      creates: /usr/share/fonts/JACK
+

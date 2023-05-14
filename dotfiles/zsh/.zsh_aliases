@@ -1,0 +1,56 @@
+alias se='sudo -e' # safer way to edit root files
+alias v='nvim'
+alias rr='ranger'
+
+# Interactive and verbose
+alias rm='rm -vi'
+alias cp='cp -vi'
+alias mv='mv -vi'
+
+alias z='zsh'
+
+#apt maintenance
+alias up='sudo apt update'
+alias upup='sudo apt update && sudo apt upgrade'
+alias ain='sudo apt install'
+
+#history
+alias hg='history 0 | grep'
+alias hh='history 0'
+
+alias ufwv='sudo ufw status verbose'
+alias ufwn='sudo ufw status numbered'
+alias ufwr='sudo ufw reload'
+
+alias nf='neofetch'
+
+#Quit Edits
+alias ali='vim ~/.zsh_aliases'
+alias zrc='vim ~/.zshrc'
+alias vrc='v ~/.config/nvim/init.vim'
+
+
+#systemctl
+alias sys='systemctl status'
+
+
+#python3
+alias pip='pip3'
+alias venv='python3 -m venv venv'
+alias pyv='source venv/bin/activate'
+
+
+#git
+alias ga='git add'
+alias gaa='git add .'
+alias gb='git branch'
+alias gc='git commit'
+alias gd='git diff'
+alias gs='git status '
+alias gl='git log '
+alias gco='git checkout'
+
+
+
+
+
